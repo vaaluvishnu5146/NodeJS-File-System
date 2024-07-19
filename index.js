@@ -1,32 +1,60 @@
-const fs = require('node:fs');
-const fsAsync = require('node:fs/promises');
+const express = require("express");
+const bodyParser = require("body-parser");
+const httpServer = express();
 
+httpServer.use(bodyParser.json());
 
-// How to create a file
-function createFileCB() {
-    fs.appendFile('test.txt', 'Hey im a text', (err) => {
-        if (err) console.log("Error creating file", err)
-        else console.log("Success creating file")
+httpServer.listen(3000, "localhost", () => {
+    console.log("Server started @", `http://localhost:3000`)
+});
+
+httpServer.get("/", (req, res) => {
+    return res.json({
+        name: "Vishnu Vardhan",
+        age: 27
     })
-}
+})
 
-async function createFileAsync() {
-    const response = await fsAsync.appendFile("./files/test.txt", "Interesting data");
-    console.log(response)
-}
+const todos = [{
+        id: 1,
+        title: 'Create npm project'
+    },
+    {
+        id: 2,
+        title: 'Install necessary dependencies'
+    }
+];
 
-function readFileSync() {
-    fs.readFile('test.txt', (err, data) => {
-        if (err) console.log(err)
-        if (data) console.log(data.toString())
+httpServer.get("/todos", (req, res) => {
+    console.log(todos)
+    return res.json({
+        message: "Todos fetched successfully",
+        data: todos
     })
-}
+})
 
-function readAllFilesFromDir() {
-    fs.readdir("./files", (err, files) => {
-        if (err) console.log(err)
-        if (files) console.log(files)
-    });
-}
+httpServer.post("/createTodo", (req, res) => {
+    todos.push(req.body)
+    return res.status(200).json({
+        message: "Data created successfully"
+    })
+})
 
-readAllFilesFromDir();
+httpServer.get("/todo/:todoId", (req, res) => {
+    const {
+        todoId
+    } = req.params;
+
+    const matchingData = todos.find((todo) => todo.id == todoId);
+
+    if (matchingData) {
+        return res.status(200).json({
+            message: "Todo fetched successfully",
+            todo: matchingData
+        })
+    } else {
+        return res.status(404).json({
+            message: "No Data Found",
+        })
+    }
+})
