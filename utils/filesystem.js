@@ -10,9 +10,9 @@ function createFileCB() {
     })
 }
 
-async function createFileAsync() {
-    const response = await fsAsync.appendFile("./files/test.txt", "Interesting data");
-    console.log(response)
+async function createFileAsync(data) {
+    const response = fsAsync.appendFile("./files/test.txt", data);
+    return response;
 }
 
 function readFileSync() {
@@ -29,4 +29,9 @@ function readAllFilesFromDir() {
     });
 }
 
-readAllFilesFromDir();
+module.exports = {
+    createFileCB,
+    createFileAsync,
+    readFileSync,
+    readAllFilesFromDir
+};

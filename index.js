@@ -1,5 +1,8 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const {
+    createFileAsync
+} = require("./utils/filesystem");
 const httpServer = express();
 
 httpServer.use(bodyParser.json());
@@ -16,17 +19,14 @@ httpServer.get("/", (req, res) => {
 })
 
 const todos = [{
-        id: 1,
-        title: 'Create npm project'
-    },
-    {
-        id: 2,
-        title: 'Install necessary dependencies'
-    }
-];
+    id: 1,
+    title: 'Create npm project'
+}, {
+    id: 2,
+    title: 'Install necessary dependencies'
+}];
 
 httpServer.get("/todos", (req, res) => {
-    console.log(todos)
     return res.json({
         message: "Todos fetched successfully",
         data: todos
@@ -35,26 +35,48 @@ httpServer.get("/todos", (req, res) => {
 
 httpServer.post("/createTodo", (req, res) => {
     todos.push(req.body)
-    return res.status(200).json({
-        message: "Data created successfully"
-    })
+    return res
+        .status(200)
+        .json({
+            message: "Data created successfully"
+        })
 })
 
 httpServer.get("/todo/:todoId", (req, res) => {
     const {
         todoId
     } = req.params;
-
     const matchingData = todos.find((todo) => todo.id == todoId);
-
     if (matchingData) {
-        return res.status(200).json({
-            message: "Todo fetched successfully",
-            todo: matchingData
-        })
+        return res
+            .status(200)
+            .json({
+                message: "Todo fetched successfully",
+                todo: matchingData
+            })
     } else {
-        return res.status(404).json({
-            message: "No Data Found",
-        })
+        return res
+            .status(404)
+            .json({
+                message: "No Data Found"
+            })
+    }
+})
+
+httpServer.post("/createFile", async (req, res) => {
+    try {
+        await createFileAsync(JSON.stringify(req.body))
+        return res
+            .status(201)
+            .json({
+                message: "File created successfully"
+            })
+    } catch (error) {
+        return res
+            .status(500)
+            .json({
+                message: "Failed to create file",
+                error
+            })
     }
 })
