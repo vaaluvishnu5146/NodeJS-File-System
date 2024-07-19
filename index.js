@@ -7,8 +7,9 @@ const httpServer = express();
 
 httpServer.use(bodyParser.json());
 
-httpServer.listen(3000, "localhost", () => {
-    console.log("Server started @", `http://localhost:3000`)
+httpServer.listen(3000, "0.0.0.0", () => {
+    console.log("Server started")
+    console.log("webservice is live")
 });
 
 httpServer.get("/", (req, res) => {
