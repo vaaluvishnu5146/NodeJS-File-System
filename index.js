@@ -4,12 +4,20 @@ const {
     createFileAsync
 } = require("./utils/filesystem");
 const httpServer = express();
+const {
+    initialize_mongo_connectivity
+} = require('./database/connection');
+
 
 httpServer.use(bodyParser.json());
 
+// INJECT ALL EXPRESS ROUTERS
+httpServer.use('/users', require('./modules/users/users.controller'))
+
 httpServer.listen(3000, "0.0.0.0", () => {
     console.log("Server started")
-    console.log("webservice is live")
+    console.log("webservice is live");
+    initialize_mongo_connectivity();
 });
 
 httpServer.get("/", (req, res) => {
