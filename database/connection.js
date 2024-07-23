@@ -1,10 +1,10 @@
 const mongoose = require("mongoose");
-const URI = "mongodb://localhost:27017/";
+
 async function initialize_mongo_connectivity() {
-    console.warn("Mongo Db connectivity initialised");
+    const URI = process.env.NODE_ENV === "DEVELOPMENT" ? "mongodb://localhost:27017/" : process.env.PROD_DB_URL;
     try {
-        const response = await mongoose.connect(URI, {
-            dbName: "taskify"
+        await mongoose.connect(URI, {
+            dbName: process.env.PROD_DB_NAME
         });
         console.log("Mongo Db connectivity success");
     } catch (error) {

@@ -8,13 +8,16 @@ const {
     initialize_mongo_connectivity
 } = require('./database/connection');
 
-
 httpServer.use(bodyParser.json());
+require('dotenv').config();
+
+var HOSTNAME = process.env.NODE_ENV === "PRODUCTION" ? process.env.RENDER_HOST_NAME : "localhost";
+var PORT = 3000;
 
 // INJECT ALL EXPRESS ROUTERS
 httpServer.use('/users', require('./modules/users/users.controller'))
 
-httpServer.listen(3000, "0.0.0.0", () => {
+httpServer.listen(PORT, HOSTNAME, () => {
     console.log("Server started")
     console.log("webservice is live");
     initialize_mongo_connectivity();
