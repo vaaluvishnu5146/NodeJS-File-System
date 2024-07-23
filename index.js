@@ -16,6 +16,7 @@ var PORT = 3000;
 
 // INJECT ALL EXPRESS ROUTERS
 httpServer.use('/users', require('./modules/users/users.controller'))
+httpServer.use('/tasks', require('./modules/tasks/tasks.controller'))
 
 httpServer.listen(PORT, HOSTNAME, () => {
     console.log("Server started")
