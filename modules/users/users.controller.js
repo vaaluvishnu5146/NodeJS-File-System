@@ -4,23 +4,6 @@ const {
     Types
 } = require('mongoose');
 
-// 1. Create Users
-// http://localhost:3000/users/create/
-UsersRouter.post('/create', async (req, res) => {
-    const newUser = new User(req.body);
-    try {
-        const response = await User.create(newUser);
-        return res.status(201).json({
-            message: "User created successfully",
-        })
-    } catch (error) {
-        return res.json({
-            message: "Error creating user",
-            error
-        })
-    }
-})
-
 // 2. Get All Users
 //http://localhost:3000/users/
 UsersRouter.get('/', async (req, res) => {
@@ -127,5 +110,7 @@ UsersRouter.delete('/delete/:userId', async (req, res) => {
         })
     }
 });
+
+
 
 module.exports = UsersRouter;

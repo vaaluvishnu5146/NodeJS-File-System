@@ -1,5 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const {
     createFileAsync
 } = require("./utils/filesystem");
@@ -7,6 +8,8 @@ const httpServer = express();
 const {
     initialize_mongo_connectivity
 } = require('./database/connection');
+
+httpServer.use(cors());
 
 httpServer.use(bodyParser.json());
 require('dotenv').config();
@@ -17,6 +20,7 @@ var PORT = 3000;
 // INJECT ALL EXPRESS ROUTERS
 httpServer.use('/users', require('./modules/users/users.controller'))
 httpServer.use('/tasks', require('./modules/tasks/tasks.controller'))
+httpServer.use('/auth', require('./modules/authentication/authentication.controller'))
 
 httpServer.listen(PORT, HOSTNAME, () => {
     console.log("Server started")
