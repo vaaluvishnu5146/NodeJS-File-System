@@ -8,6 +8,9 @@ const httpServer = express();
 const {
     initialize_mongo_connectivity
 } = require('./database/connection');
+const {
+    BasicMiddleware
+} = require("./middleware/BasicMiddleware");
 
 httpServer.use(cors());
 
@@ -18,7 +21,7 @@ var HOSTNAME = process.env.NODE_ENV === "PRODUCTION" ? process.env.RENDER_HOST_N
 var PORT = 3000;
 
 // INJECT ALL EXPRESS ROUTERS
-httpServer.use('/users', require('./modules/users/users.controller'))
+httpServer.use('/users', BasicMiddleware, require('./modules/users/users.controller'))
 httpServer.use('/tasks', require('./modules/tasks/tasks.controller'))
 httpServer.use('/auth', require('./modules/authentication/authentication.controller'))
 

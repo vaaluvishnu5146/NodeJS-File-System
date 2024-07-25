@@ -1,21 +1,31 @@
 const AuthRouter = require('express').Router();
 const User = require('../users/users.model');
-
+var jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 // 1. Create auth
 // http://localhost:3000/auth/create/
-AuthRouter.post('/create', async (req, res) => {
+AuthRouter.post('/create', (req, res) => {
     const newUser = new User(req.body);
-    try {
-        const response = await User.create(newUser);
-        return res.status(201).json({
-            message: "User created successfully",
-        })
-    } catch (error) {
-        return res.json({
-            message: "Error creating user",
-            error
-        })
-    }
+    bcrypt.hash(newUser.password, 10, async function (err, hash) {
+        // Store hash in your password DB.
+        if (err) {
+            console.log(err)
+        }
+        newUser.password = hash;
+        if (hash) {
+            try {
+                const response = await User.create(newUser);
+                return res.status(201).json({
+                    message: "User created successfully",
+                })
+            } catch (error) {
+                return res.json({
+                    message: "Error creating user",
+                    error
+                })
+            }
+        }
+    });
 })
 
 // Signin api
@@ -61,8 +71,15 @@ AuthRouter.post('/signin', async (req, res) => {
         } else {
             // If password is matching then confirm the login session
             if (response.password === password) {
+                var token = jwt.sign({
+                    _id: response._id,
+                    role: "basic"
+                }, "FILE_SYSTEM_SECRET_KEY", {
+                    expiresIn: "1h"
+                });
                 return res.status(200).json({
-                    message: "Login Successfull"
+                    message: "Login Successfull",
+                    token
                 })
             }
             // Password don't match. So user is not trustworthy
